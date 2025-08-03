@@ -162,7 +162,7 @@ def select_best_model(experiment_name, model_name):
 
         # Add a short delay to allow the model registry to stabilize before updating.
         logging.info("Waiting for 5 seconds before adding description...")
-        time.sleep(5)
+        time.sleep(10)
 
         # Optionally, add a description to the registered model version
         client.update_model_version(
