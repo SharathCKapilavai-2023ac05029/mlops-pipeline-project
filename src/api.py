@@ -10,7 +10,9 @@ import logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Set the MLflow Tracking URI
-mlflow.set_tracking_uri("http://127.0.0.1:5000")
+# mlflow.set_tracking_uri("http://127.0.0.1:5000")
+mlflow.set_tracking_uri("http://host.docker.internal:5000")
+
 
 # --- 1. Initialize FastAPI app ---
 app = FastAPI(
