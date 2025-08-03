@@ -3,7 +3,7 @@
 # --- Stage 1: Use an official Python runtime as a parent image ---
 # Using a specific version is good practice for reproducibility.
 # The 'slim' variant is smaller and good for production.
-FROM python:3.9-slim
+FROM python:3.10-slim
 
 # --- Set the working directory inside the container ---
 # This is where our application code will live.
