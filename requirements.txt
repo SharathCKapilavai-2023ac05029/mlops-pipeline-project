@@ -1,0 +1,28 @@
+#MLOps Pipeline Project Dependencies
+
+#Core ML & Data Handling
+scikit-learn
+pandas
+numpy
+
+#ML Experiment Tracking
+mlflow
+
+#Data Versioning (Optional, as per assignment)
+dvc[gdrive] # Using [s3] as an example for remote storage, can be changed
+
+#API Framework (Choose one, FastAPI is modern and fast)
+fastapi
+uvicorn[standard] # Server to run the FastAPI application
+
+#Monitoring (Optional, for exposing metrics)
+prometheus-client
+
+# For loading environment variables (good practice)
+python-dotenv
+
+#Plotting
+matplotlib
+seaborn
+
+pyYAML
