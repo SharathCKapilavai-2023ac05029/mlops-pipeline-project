@@ -31,3 +31,4 @@ pyYAML
 #For testing
 pytest
 requests
+flake8
