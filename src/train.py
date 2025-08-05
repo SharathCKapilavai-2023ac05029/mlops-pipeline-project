@@ -16,6 +16,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import yaml
 import time
+import joblib
 
 # Set up basic logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -106,7 +107,10 @@ def train_and_evaluate(model, X_train, y_train, X_test, y_test, model_name, data
         # --- Log the model with signature and input example ---
         logging.info("Logging the model with signature...")
         input_example = X_train.head()
-        signature = infer_signature(input_example, y_pred)
+
+        output_example = model.predict(input_example)
+        signature = infer_signature(input_example, output_example)
+
         mlflow.sklearn.log_model(
             sk_model=model, 
             artifact_path="model",
@@ -164,14 +168,23 @@ def select_best_model(experiment_name, model_name):
         logging.info("Waiting for 5 seconds before adding description...")
         time.sleep(10)
 
-        # Optionally, add a description to the registered model version
-        client.update_model_version(
-            name=model_name,
-            version=registered_model.version,
-            description=f"Model from run {best_run_id}, selected as best based on R2 score."
-        )
+        models_dir = Path("models")
+        models_dir.mkdir(exist_ok=True)
+        model_path = models_dir / "cal-housing-model.joblib"
+        joblib.dump(registered_model, model_path)
+        logging.info(f"Best model saved to '{model_path}' for DVC tracking.")
 
+
+        # Optionally, add a description to the registered model version
+        # client.update_model_version(
+        #     name=model_name,
+        #     version=registered_model.version,
+        #     description=f"Model from run {best_run_id}, selected as best based on R2 score."
+        # )
         logging.info(f"Successfully registered model '{model_name}' version {registered_model.version}")
+
+        
+
 
     except Exception as e:
         logging.error(f"An error occurred during model promotion: {e}")

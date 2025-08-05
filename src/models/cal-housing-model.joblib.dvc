@@ -1,0 +1,5 @@
+outs:
+- md5: 8b25e45ce9a447e14e70389371da42dd
+  size: 736
+  hash: md5
+  path: cal-housing-model.joblib

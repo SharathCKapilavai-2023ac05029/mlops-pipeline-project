@@ -25,4 +25,9 @@ python-dotenv
 matplotlib
 seaborn
 
+# For configuration management
 pyYAML
+
+#For testing
+pytest
+requests
