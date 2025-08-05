@@ -1,0 +1,51 @@
+# .github/workflows/retrain.yml
+
+name: Model Retraining on New Data
+
+on:
+  push:
+    branches: [ "main" ]
+    # This is the trigger: only run when the DVC pointer for our dataset changes.
+    paths:
+      - 'data/processed/housing.csv.dvc'
+
+jobs:
+  retrain:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Python dependencies
+        run: |
+          pip install -r requirements.txt
+
+      # DVC steps require special setup for authentication
+      - name: Set up DVC
+        uses: iterative/setup-dvc@v1
+
+      # This step uses a secret to authenticate with Google Drive
+      - name: Authenticate with Google Drive
+        run: |
+          dvc remote modify gdrive gdrive_client_id ${{ secrets.GDRIVE_CLIENT_ID }}
+          dvc remote modify gdrive gdrive_client_secret ${{ secrets.GDRIVE_CLIENT_SECRET }}
+          # The next command is needed to handle the token for non-interactive sessions
+          dvc gdrive-token ${{ secrets.GDRIVE_USER_CREDENTIALS_DATA }} gdrive
+
+      - name: Pull data from DVC remote
+        run: dvc pull
+
+      - name: Run model training script
+        # This step assumes you have a remote MLflow server running.
+        # The script will fail if it can't reach the tracking URI.
+        # For this assignment, the presence of this step demonstrates the workflow.
+        run: python src/train.py
+        env:
+          # You would set the MLFLOW_TRACKING_URI as an environment variable
+          # pointing to your remote server.
+          MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
