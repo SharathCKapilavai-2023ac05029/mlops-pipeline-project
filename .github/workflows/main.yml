@@ -5,6 +5,11 @@ name: CI/CD Pipeline
 on:
   push:
     branches: [ "main" ]
+    # FIX: This workflow will now be ignored if the only changes in a push
+    # are to files ending in .dvc. This prevents the retraining pipeline
+    # from triggering this CI pipeline.
+    paths-ignore:
+      - '**.dvc'
   workflow_dispatch:
 
 jobs:
