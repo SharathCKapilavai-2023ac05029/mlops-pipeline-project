@@ -17,13 +17,15 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import yaml
 import time
 import joblib
+import os
 
 # Set up basic logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # --- Set the MLflow Tracking URI ---
 # This tells MLflow to send data to the running UI server.
-mlflow.set_tracking_uri("http://127.0.0.1:5000")
+# mlflow.set_tracking_uri("http://127.0.0.1:5000")
+mlflow.set_tracking_uri(os.environ.get("MLFLOW_TRACKING_URI", "http://127.0.0.1:5000"))
 # Set the experiment name
 mlflow.set_experiment("California Housing Prediction")
 # Enable automatic system metrics logging
