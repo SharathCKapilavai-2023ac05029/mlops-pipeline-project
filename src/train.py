@@ -17,7 +17,7 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import yaml
 import time
 import joblib
-import os
+import os, json
 
 # Set up basic logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -113,12 +113,31 @@ def train_and_evaluate(model, X_train, y_train, X_test, y_test, model_name, data
         output_example = model.predict(input_example)
         signature = infer_signature(input_example, output_example)
 
-        mlflow.sklearn.log_model(
-            sk_model=model, 
-            artifact_path="model",
-            signature=signature,
-            input_example=input_example
-        )
+        # mlflow.sklearn.log_model(
+        #     sk_model=model, 
+        #     artifact_path="model",
+        #     signature=signature,
+        #     input_example=input_example
+        # )
+        
+        # Save the model manually
+        joblib.dump(model, "model.joblib")
+
+        # Log the file as a regular artifact
+        mlflow.log_artifact("model.joblib", artifact_path="model")
+
+        # Optionally log signature & input_example manually as artifacts
+
+        # Save input example and signature (as JSON for inspection purposes)
+        with open("model/input_example.json", "w") as f:
+            json.dump(input_example, f)
+
+        with open("model/signature.json", "w") as f:
+            json.dump(signature.to_dict(), f)
+
+        # Log them as artifacts
+        mlflow.log_artifact("model/input_example.json", artifact_path="model")
+        mlflow.log_artifact("model/signature.json", artifact_path="model")
         
         # Log the training script itself
         mlflow.log_artifact(__file__, "code")
