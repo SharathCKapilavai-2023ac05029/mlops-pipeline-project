@@ -30,15 +30,14 @@ jobs:
         uses: iterative/setup-dvc@v1
 
       # This step uses a secret to authenticate with Google Drive
-      - name: Authenticate with Google Drive
+      - name: Authenticate DVC Remote
         run: |
-          dvc remote modify gdrive gdrive_client_id ${{ secrets.GDRIVE_CLIENT_ID }}
-          dvc remote modify gdrive gdrive_client_secret ${{ secrets.GDRIVE_CLIENT_SECRET }}
-          # The next command is needed to handle the token for non-interactive sessions
-          dvc gdrive-token ${{ secrets.GDRIVE_USER_CREDENTIALS_DATA }} gdrive
+          dvc remote modify origin --local auth basic
+          dvc remote modify origin --local user ${{ secrets.DAGSHUB_USERNAME }}
+          dvc remote modify origin --local password ${{ secrets.DAGSHUB_TOKEN }}
 
       - name: Pull data from DVC remote
-        run: dvc pull
+        run: dvc pull -r origin
 
       - name: Run model training script
         # This step assumes you have a remote MLflow server running.
@@ -49,3 +48,11 @@ jobs:
           MLFLOW_TRACKING_USERNAME: ${{ secrets.MLFLOW_TRACKING_USERNAME }}
           MLFLOW_TRACKING_PASSWORD: ${{ secrets.MLFLOW_TRACKING_PASSWORD }}
         run: python src.train.py
+
+      - name: Commit and push DVC pointer
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add models/model.joblib.dvc
+          git commit -m "chore: Update model pointer after retraining [skip ci]"
+          git push
