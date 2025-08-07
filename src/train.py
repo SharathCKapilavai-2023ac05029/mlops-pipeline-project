@@ -195,7 +195,8 @@ def select_best_model(experiment_name, model_name):
 def main():
     """Main function to run the training pipeline."""
     # Load data
-    data_path = Path("..")/"data"/"processed"/"housing.csv"
+    project_root = Path(__file__).resolve().parent.parent 
+    data_path = project_root/"data"/"processed"/"housing.csv"
     df = pd.read_csv(str(data_path))
     
     # --- Get data version from DVC file ---
