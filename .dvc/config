@@ -2,3 +2,5 @@
     remote = gdrive
 ['remote "gdrive"']
     url = gdrive://1RDxGrk951Mpm9SlvafwI9zG5wVR5ORko
+['remote "origin"']
+    url = https://dagshub.com/SharathCKapilavai-2023ac05029/mlops-pipeline-project.dvc
