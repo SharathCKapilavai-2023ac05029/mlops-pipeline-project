@@ -223,7 +223,7 @@ def select_best_model(experiment_name, model_name):
         #     version=registered_model.version,
         #     description=f"Model from run {best_run_id}, selected as best based on R2 score."
         # )
-        logging.info(f"Successfully registered model '{model_name}' version {registered_model.version}")
+        logging.info(f"Successfully registered model '{model_name}'")
 
         
 
