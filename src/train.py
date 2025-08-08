@@ -113,6 +113,7 @@ def train_and_evaluate(model, X_train, y_train, X_test, y_test, model_name, data
         output_example = model.predict(input_example)
         signature = infer_signature(input_example, output_example)
 
+        #This is not working in DagsHub, so we save the model manually
         # mlflow.sklearn.log_model(
         #     sk_model=model, 
         #     artifact_path="model",

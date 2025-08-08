@@ -62,7 +62,7 @@ async def startup_event():
 
 # --- 2. Load the MLflow Model ---
 MODEL_NAME = "BestHousingModel"
-MODEL_STAGE = "None" # We'll use the latest version, but you could use "Staging" or "Production"
+MODEL_STAGE = "None"
 
 try:
     logging.info(f"Loading model '{MODEL_NAME}' version '{MODEL_STAGE}' from MLflow Model Registry...")
@@ -153,4 +153,3 @@ def read_root():
 def get_metrics():
     """Exposes Prometheus metrics."""
     return Response(media_type="text/plain", content=generate_latest())
-
