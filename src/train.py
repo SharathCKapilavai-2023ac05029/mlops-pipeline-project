@@ -119,7 +119,7 @@ def train_and_evaluate(model, X_train, y_train, X_test, y_test, model_name, data
         #     signature=signature,
         #     input_example=input_example
         # )
-        models_dir = Path("models")
+        models_dir = Path("src") / "models"
         models_dir.mkdir(exist_ok=True)
         # Save the model manually
         model_file = models_dir / f"{model_name}.joblib"
