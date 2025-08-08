@@ -186,19 +186,34 @@ def select_best_model(experiment_name, model_name):
 
         # Register the model from the best run
         logging.info(f"Registering model '{model_name}' from {model_uri}")
+        models_dir = Path("src") / "models"
+        models_dir.mkdir(exist_ok=True)
+        model_path = models_dir / "cal-housing-model.joblib"
         try:
             registered_model = mlflow.register_model(model_uri=model_uri, name=model_name)
+           
+            joblib.dump(registered_model, model_path)
 
         # Add a short delay to allow the model registry to stabilize before updating.
-            logging.info("Waiting for 5 seconds before adding description...")
-            time.sleep(10)
+            # logging.info("Waiting for 5 seconds before adding description...")
+            # time.sleep(10)
         except Exception as e:
             logging.warning(f"An error occurred during model registration or promotion: {e}")
 
-        models_dir = Path("models")
-        models_dir.mkdir(exist_ok=True)
-        model_path = models_dir / "cal-housing-model.joblib"
-        joblib.dump(registered_model, model_path)
+            # Reuse the locally saved model corresponding to the best model name
+            best_model_name = best_run.data.tags.get("model_name", None)
+            if best_model_name:
+                source_model_path = models_dir / f"{best_model_name}.joblib"
+                if source_model_path.exists():
+                    import shutil
+                    shutil.copy(source_model_path, model_path)
+                    logging.info(f"Best model copied to '{model_path}' for DVC tracking.")
+                else:
+                    logging.warning(f"Expected model file '{source_model_path}' not found.")
+            else:
+                logging.warning("Best run does not contain a 'model_name' tag.")
+
+    
         logging.info(f"Best model saved to '{model_path}' for DVC tracking.")
 
 
