@@ -186,11 +186,14 @@ def select_best_model(experiment_name, model_name):
 
         # Register the model from the best run
         logging.info(f"Registering model '{model_name}' from {model_uri}")
-        registered_model = mlflow.register_model(model_uri=model_uri, name=model_name)
+        try:
+            registered_model = mlflow.register_model(model_uri=model_uri, name=model_name)
 
         # Add a short delay to allow the model registry to stabilize before updating.
-        logging.info("Waiting for 5 seconds before adding description...")
-        time.sleep(10)
+            logging.info("Waiting for 5 seconds before adding description...")
+            time.sleep(10)
+        except Exception as e:
+            logging.warning(f"An error occurred during model registration or promotion: {e}")
 
         models_dir = Path("models")
         models_dir.mkdir(exist_ok=True)
