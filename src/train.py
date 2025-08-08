@@ -119,25 +119,28 @@ def train_and_evaluate(model, X_train, y_train, X_test, y_test, model_name, data
         #     signature=signature,
         #     input_example=input_example
         # )
-        
+        models_dir = Path("models")
+        models_dir.mkdir(exist_ok=True)
         # Save the model manually
-        joblib.dump(model, "model.joblib")
-
-        # Log the file as a regular artifact
-        mlflow.log_artifact("model.joblib", artifact_path="model")
+        model_file = models_dir / f"{model_name}.joblib"
+        joblib.dump(model, model_file)
 
         # Optionally log signature & input_example manually as artifacts
 
         # Save input example and signature (as JSON for inspection purposes)
-        with open("model/input_example.json", "w") as f:
-            json.dump(input_example, f)
+        input_example_path = models_dir / f"{model_name}_input_example.json"
+        signature_path = models_dir / f"{model_name}_signature.json"
 
-        with open("model/signature.json", "w") as f:
+        with open(input_example_path, "w") as f:
+            json.dump(input_example.to_dict(orient="records"), f)
+
+        with open(signature_path, "w") as f:
             json.dump(signature.to_dict(), f)
 
-        # Log them as artifacts
-        mlflow.log_artifact("model/input_example.json", artifact_path="model")
-        mlflow.log_artifact("model/signature.json", artifact_path="model")
+        # Log artifacts to MLflow
+        mlflow.log_artifact(str(model_file))
+        mlflow.log_artifact(str(input_example_path))
+        mlflow.log_artifact(str(signature_path))
         
         # Log the training script itself
         mlflow.log_artifact(__file__, "code")
