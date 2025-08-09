@@ -112,14 +112,18 @@ def train_and_evaluate(model, X_train, y_train, X_test, y_test, model_name, data
 
         output_example = model.predict(input_example)
         signature = infer_signature(input_example, output_example)
-
+        try:
         #This is not working in DagsHub, so we save the model manually
-        # mlflow.sklearn.log_model(
-        #     sk_model=model, 
-        #     artifact_path="model",
-        #     signature=signature,
-        #     input_example=input_example
-        # )
+            mlflow.sklearn.log_model(
+                sk_model=model, 
+                artifact_path="model",
+                signature=signature,
+                input_example=input_example
+            )
+        except Exception as e:
+            logging.warning(f"Failed to log model with MLflow: {e}")
+            logging.info("Saving the model manually as joblib file.")
+        
         models_dir = Path("src") / "models"
         models_dir.mkdir(exist_ok=True)
         # Save the model manually
